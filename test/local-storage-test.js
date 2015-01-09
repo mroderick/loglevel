@@ -2,14 +2,14 @@
 
 define(['test/test-helpers'], function(testHelpers) {
     var describeIf = testHelpers.describeIf;
-    var it = testHelpers.itWithFreshLog;
 
     var originalConsole = window.console;
     var originalDocument = window.document;
+    var log;
 
     describeIf(testHelpers.isLocalStorageAvailable(), "Local storage persistence tests:", function() {
 
-        beforeEach(function() {
+        beforeEach(function(done) {
             window.console = {"log" : jasmine.createSpy("console.log")};
             jasmine.addMatchers({
                 "toBeAtLevel" : testHelpers.toBeAtLevel,
@@ -19,6 +19,12 @@ define(['test/test-helpers'], function(testHelpers) {
             });
 
             testHelpers.clearStoredLevels();
+
+            // reload loglevel to get a brand new copy
+            testHelpers.withFreshLog(function(newLog){
+                log = newLog;
+                done();
+            });
         });
 
         afterEach(function() {

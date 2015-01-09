@@ -2,19 +2,24 @@
 
 define(['test/test-helpers'], function(testHelpers) {
     var describeIf = testHelpers.describeIf;
-    var it = testHelpers.itWithFreshLog;
 
     var originalConsole = window.console;
     var originalDocument = window.document;
+    var log;
 
     describeIf(testHelpers.isCookieStorageAvailable() && !testHelpers.isLocalStorageAvailable(),
                "Cookie-only persistence tests:", function() {
 
-        beforeEach(function() {
+        beforeEach(function(done) {
             window.console = {"log" : jasmine.createSpy("console.log")};
             jasmine.addMatchers({
                 "toBeAtLevel" : testHelpers.toBeAtLevel,
                 "toBeTheStoredLevel" : testHelpers.toBeTheLevelStoredByCookie
+            });
+
+            testHelpers.withFreshLog(function(newLog){
+                log = newLog;
+                done();
             });
         });
 
